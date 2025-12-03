@@ -22,6 +22,7 @@ async function getWeatherData(WeatherLocation){
         const jsonResponse = await response.json();
         const weatherData = weatherObject(jsonResponse);
         const { address,day,conditions,feelslike,humidity,temp} = weatherData;
+        getFittingGif(conditions);
         if (unitGroupWeather === "metric"){
             resultsDiv.innerHTML = `Location: ${address} <br>Date: ${day}<br>Condition: ${conditions} <br>Feelslike temperature: ${feelslike}°C<br>humidity: ${humidity}<br>Temperature: ${temp}°C`;
         } else {
@@ -30,6 +31,18 @@ async function getWeatherData(WeatherLocation){
     } catch(error) {
         console.log(error);
     }  
+}
+
+async function getFittingGif(conditions){
+    try {
+        const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=HvCpi4gDgaKHFAnZZyniIIBQt1gBlruy&s=${conditions}`)
+        const jsonResponse = await response.json();
+        const url = jsonResponse.data.images.original.url;
+        const gifPlaceholder = document.querySelector("#gif");
+        gifPlaceholder.src = url;
+    } catch(error) {
+        console.log(error);
+    }
 }
 
 function weatherObject(jsonResponse){
