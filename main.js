@@ -6,13 +6,27 @@ form.addEventListener("submit", function(event){
     getWeatherData(searchQuery);
 })
 
+let unitGroupWeather = "metric";
+const switchToFahrenheit = document.querySelector("#Fahrenheit");
+const switchToCelcius = document.querySelector("#Celcius");
+switchToFahrenheit.addEventListener("click", ()=> {
+    unitGroupWeather = "us";
+})
+switchToCelcius.addEventListener("click", ()=>{
+    unitGroupWeather = "metric";
+})
+
 async function getWeatherData(WeatherLocation){
     try {
-        const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${WeatherLocation}?unitGroup=metric&include=days%2Ccurrent&key=YY5KXEMSNCSTRC4K7AD94FQ97&contentType=json`);
+        const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${WeatherLocation}?unitGroup=${unitGroupWeather}&include=days%2Ccurrent&key=YY5KXEMSNCSTRC4K7AD94FQ97&contentType=json`);
         const jsonResponse = await response.json();
         const weatherData = weatherObject(jsonResponse);
         const { address,day,conditions,feelslike,humidity,temp} = weatherData;
-        resultsDiv.innerHTML = `Location: ${address} <br>Date: ${day}<br>Condition: ${conditions} <br>Feelslike temperature: ${feelslike}<br>humidity: ${humidity}<br>Temperature: ${temp}`;
+        if (unitGroupWeather === "metric"){
+            resultsDiv.innerHTML = `Location: ${address} <br>Date: ${day}<br>Condition: ${conditions} <br>Feelslike temperature: ${feelslike}°C<br>humidity: ${humidity}<br>Temperature: ${temp}°C`;
+        } else {
+            resultsDiv.innerHTML = `Location: ${address} <br>Date: ${day}<br>Condition: ${conditions} <br>Feelslike temperature: ${feelslike}°F<br>humidity: ${humidity}<br>Temperature: ${temp}°F`;
+        }
     } catch(error) {
         console.log(error);
     }  
